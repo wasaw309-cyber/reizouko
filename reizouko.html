@@ -4,826 +4,642 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>🏠 おうち冷蔵庫</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ── Reset & Base ── */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif;background:#f4f1ec;color:#1a1a1a;min-height:100vh}
 input,select,textarea,button{font-family:inherit}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#d0c9b8;border-radius:2px}
-
-/* ── App shell ── */
-#app{max-width:520px;margin:0 auto;min-height:100vh;position:relative}
-
-/* ── Header ── */
-.header{background:#1a1a1a;color:#fff;position:sticky;top:0;z-index:100}
-.h-top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px}
-.logo{font-size:18px;font-weight:700}
-.logo-sub{font-size:10px;color:#888;letter-spacing:.1em}
-.alert-badge{background:#e53935;color:#fff;font-size:12px;font-weight:600;padding:6px 12px;border-radius:20px;cursor:pointer;animation:pulse 2s infinite}
+#app{max-width:520px;margin:0 auto;min-height:100vh}
+.hdr{background:#1a1a1a;color:#fff;position:sticky;top:0;z-index:100}
+.h-top{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px}
+.logo{font-size:17px;font-weight:700}.logo-sub{font-size:10px;color:#888;letter-spacing:.1em}
+.abadge{background:#e53935;color:#fff;font-size:11px;font-weight:600;padding:5px 10px;border-radius:20px;cursor:pointer;animation:pulse 2s infinite;display:none}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
 nav{display:flex;border-top:1px solid #333}
-.nav-btn{flex:1;background:transparent;border:none;color:#888;cursor:pointer;padding:10px 4px;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:2px;transition:all .2s;letter-spacing:.03em}
-.nav-btn.active{color:#fff;background:#333}
-.nav-icon{font-size:18px}
-
-/* ── Main ── */
-main{padding:16px 14px 100px}
-.fade{animation:fi .3s ease}
-@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-/* ── Cards & common ── */
+.nb{flex:1;background:transparent;border:none;color:#888;cursor:pointer;padding:9px 4px;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:2px;transition:all .2s}
+.nb.act{color:#fff;background:#333}
+.ni{font-size:17px}
+main{padding:14px 14px 100px}
+.fade{animation:fi .25s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .card{background:#fff;border-radius:14px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
-.sec-title{font-size:13px;font-weight:700;color:#555;letter-spacing:.05em;margin:16px 0 10px}
-.empty{text-align:center;padding:40px 20px;color:#bbb;font-size:14px}
-
-/* ── Stats row ── */
-.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
-.stat-card{padding:14px 10px;text-align:center;cursor:pointer}
-.stat-n{font-size:26px;font-weight:700}
-.stat-l{font-size:11px;color:#aaa;margin-top:2px}
-
-/* ── Fridge grid ── */
-.fridge-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.fridge-card{padding:14px 10px;text-align:center;cursor:pointer;border:2px solid;transition:transform .2s}
-.fridge-card:active{transform:scale(.97)}
-.fridge-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 8px}
-.fridge-name{font-size:12px;font-weight:600}
-.fridge-cnt{font-size:20px;font-weight:700;margin-top:4px}
-.fridge-warn{font-size:10px;color:#e53935;margin-top:4px}
-
-/* ── Urgent row ── */
-.urg-row{display:flex;align-items:center;gap:12px;background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 6px rgba(0,0,0,.06);border-left:3px solid #e53935}
-
-/* ── Expiry badge ── */
-.exp-badge{font-size:12px;font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0}
-
-/* ── Filter row ── */
-.filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;-ms-overflow-style:none;scrollbar-width:none}
-.filter-row::-webkit-scrollbar{display:none}
-.fbtn{padding:7px 14px;border-radius:20px;border:1.5px solid #e0dbd2;background:#fff;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .2s}
-.fbtn.factive{background:#1a1a1a;border-color:#1a1a1a;color:#fff}
-
-/* ── Search ── */
-.sinput{width:100%;padding:10px 14px;border:1.5px solid #e8e4dc;border-radius:12px;font-size:14px;background:#fff;margin-bottom:12px;outline:none}
-.sinput:focus{border-color:#aaa}
-
-/* ── Item row ── */
-.irow{display:flex;align-items:center;gap:12px;background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.05);transition:transform .15s}
-.irow:active{transform:scale(.99)}
-.item-list{display:flex;flex-direction:column;gap:8px}
-.item-name{font-size:14px;font-weight:600}
-.item-meta{font-size:12px;color:#888;display:flex;gap:4px;flex-wrap:wrap;margin-top:2px}
-
-/* ── Buttons ── */
-.btn-primary{background:#1a1a1a;color:#fff;border:none;border-radius:12px;padding:12px 20px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
-.btn-primary:active{background:#333;transform:translateY(1px)}
-.btn-primary:disabled{opacity:.5;cursor:not-allowed}
-.btn-ghost{background:#f5f2ed;color:#555;border:none;border-radius:12px;padding:10px 16px;font-size:14px;cursor:pointer;transition:all .2s}
-.btn-ghost:active{background:#ede9e2}
-.xbtn{background:none;border:none;color:#ddd;font-size:22px;cursor:pointer;padding:4px;flex-shrink:0;line-height:1}
-.xbtn:active{color:#e57373}
-
-/* ── FAB ── */
-.fab{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;border:none;border-radius:28px;padding:14px 28px;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:50;transition:all .2s;white-space:nowrap}
-.fab:active{background:#333;transform:translateX(-50%) translateY(2px)}
-
-/* ── Modal / Overlay ── */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:flex-end;justify-content:center}
-.modal{background:#fff;border-radius:20px 20px 0 0;padding:24px 20px;width:100%;max-width:520px;max-height:88vh;overflow-y:auto}
-.m-title{font-size:18px;font-weight:700;margin-bottom:18px}
-.field{margin-bottom:14px}
-.lbl{font-size:12px;color:#888;font-weight:600;display:block;margin-bottom:6px}
-.fi{width:100%;padding:10px 14px;border:1.5px solid #e8e4dc;border-radius:10px;font-size:14px;background:#fafaf8;outline:none;transition:border .2s}
-.fi:focus{border-color:#aaa;background:#fff}
-
-/* ── Preset chips ── */
-.preset-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-.preset-chip{padding:8px 12px;border-radius:12px;border:1.5px solid #e0dbd2;background:#fff;color:#333;cursor:pointer;font-size:13px;transition:all .2s;display:flex;align-items:center;gap:4px}
-.preset-chip.selected{background:#1a1a1a;border-color:#1a1a1a;color:#fff}
-.preset-chip.hot{background:#fff8e1}
-.preset-chip.used{background:#f9f9f9}
-
-/* ── Sub-tabs ── */
-.subtabs{display:flex;gap:4px;margin-bottom:16px;background:#ede9e2;border-radius:12px;padding:4px}
-.stab{flex:1;padding:8px 4px;border:none;background:transparent;font-size:12px;cursor:pointer;border-radius:8px;transition:all .2s;color:#888}
-.stab.stactive{background:#fff;color:#1a1a1a;font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.1)}
-
-/* ── Shopping ── */
-.sugg-box{background:#fff;border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
-.p-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-left:6px}
-
-/* ── Flyer ── */
-.flyer-upload{background:#fff;border-radius:16px;padding:32px;text-align:center;cursor:pointer;border:2px dashed #ddd;margin-bottom:16px;display:flex;flex-direction:column;align-items:center;transition:border .2s}
-.flyer-upload:active{border-color:#aaa}
-.flyer-item{background:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);margin-bottom:8px}
-
-/* ── Memo ── */
-.memo-area{width:100%;min-height:220px;padding:14px;border:1.5px solid #e8e4dc;border-radius:14px;font-size:15px;line-height:1.9;background:#fff;outline:none;resize:vertical}
-
-/* ── Meals ── */
-.day-card{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
-.meal-row{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid #fafaf8;align-items:flex-start}
-
-/* ── Loading ── */
-.load-box{text-align:center;padding:40px 20px;color:#aaa}
-.spin{width:36px;height:36px;border:3px solid #eee;border-top-color:#1a1a1a;border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 12px}
-@keyframes sp{to{transform:rotate(360deg)}}
-.err-box{background:#fce4ec;border-radius:12px;padding:14px;color:#c62828;font-size:13px}
-
-/* ── Help overlay ── */
-.help-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;overflow-y:auto;padding:20px 16px 40px}
-.help-box{background:#fff;border-radius:20px;padding:24px 20px;max-width:480px;margin:0 auto}
-.help-step{display:flex;gap:14px;align-items:flex-start;margin-bottom:20px}
-.help-num{width:32px;height:32px;background:#1a1a1a;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.stitle{font-size:13px;font-weight:700;color:#555;margin:14px 0 8px}
+.empty{text-align:center;padding:36px 20px;color:#bbb;font-size:13px;line-height:1.8}
+.srow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px}
+.sc{padding:13px 8px;text-align:center;cursor:pointer}
+.sn{font-size:24px;font-weight:700}.sl{font-size:11px;color:#aaa;margin-top:2px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.fc{padding:13px 8px;text-align:center;cursor:pointer;border:2px solid;transition:transform .15s}
+.fc:active{transform:scale(.97)}
+.fi2{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 7px}
+.fn{font-size:11px;font-weight:600}.fcnt{font-size:19px;font-weight:700;margin-top:3px}
+.fw{font-size:10px;color:#e53935;margin-top:3px}
+.ur{display:flex;align-items:center;gap:11px;background:#fff;border-radius:12px;padding:11px 13px;margin-bottom:7px;box-shadow:0 1px 5px rgba(0,0,0,.06);border-left:3px solid #e53935}
+.eb{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0;white-space:nowrap}
+.frow{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;-ms-overflow-style:none;scrollbar-width:none}
+.frow::-webkit-scrollbar{display:none}
+.fbtn{padding:6px 13px;border-radius:20px;border:1.5px solid #e0dbd2;background:#fff;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .2s}
+.fbtn.fa{background:#1a1a1a;border-color:#1a1a1a;color:#fff}
+.si{width:100%;padding:9px 13px;border:1.5px solid #e8e4dc;border-radius:11px;font-size:14px;background:#fff;margin-bottom:11px;outline:none}
+.si:focus{border-color:#aaa}
+.ir{display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:11px 13px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.ilist{display:flex;flex-direction:column;gap:7px}
+.iname{font-size:14px;font-weight:600}
+.imeta{font-size:11px;color:#888;display:flex;gap:4px;flex-wrap:wrap;margin-top:2px}
+/* qty controls */
+.qctrl{display:flex;align-items:center;flex-shrink:0}
+.qbtn{width:30px;height:30px;border:1.5px solid #e0dbd2;background:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background .15s;line-height:1;flex-shrink:0}
+.qbtn:first-child{border-radius:8px 0 0 8px}
+.qbtn:last-child{border-radius:0 8px 8px 0}
+.qbtn:active{background:#f0ede8}
+.qnum{min-width:34px;text-align:center;border-top:1.5px solid #e0dbd2;border-bottom:1.5px solid #e0dbd2;height:30px;font-size:13px;font-weight:600;background:#fafaf8;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.bp{background:#1a1a1a;color:#fff;border:none;border-radius:12px;padding:11px 18px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:5px}
+.bp:active{background:#333;transform:translateY(1px)}
+.bp:disabled{opacity:.5;cursor:not-allowed}
+.bg{background:#f5f2ed;color:#555;border:none;border-radius:12px;padding:10px 16px;font-size:14px;cursor:pointer}
+.bg:active{background:#ede9e2}
+.xb{background:none;border:none;color:#ccc;font-size:22px;cursor:pointer;padding:2px 4px;flex-shrink:0;line-height:1}
+.xb:active{color:#e57373}
+.fab{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;border:none;border-radius:28px;padding:13px 26px;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.28);z-index:50;white-space:nowrap}
+.fab:active{transform:translateX(-50%) translateY(2px)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:flex;align-items:flex-end;justify-content:center}
+.mo{background:#fff;border-radius:20px 20px 0 0;padding:22px 18px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.mt{font-size:17px;font-weight:700;margin-bottom:16px}
+.lbl{font-size:12px;color:#888;font-weight:600;display:block;margin-bottom:5px}
+.field{margin-bottom:13px}
+.fi3{width:100%;padding:10px 13px;border:1.5px solid #e8e4dc;border-radius:10px;font-size:14px;background:#fafaf8;outline:none;transition:border .2s}
+.fi3:focus{border-color:#aaa;background:#fff}
+.pw{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:13px}
+.pc{padding:7px 11px;border-radius:11px;border:1.5px solid #e0dbd2;background:#fff;color:#333;cursor:pointer;font-size:12px;transition:all .2s;display:flex;align-items:center;gap:3px}
+.pc.sel{background:#1a1a1a;border-color:#1a1a1a;color:#fff}
+.pc.hot{background:#fff8e1}
+.pc.used{background:#f5f5f5}
+.stabs{display:flex;gap:4px;margin-bottom:14px;background:#ede9e2;border-radius:11px;padding:4px}
+.stb{flex:1;padding:7px 2px;border:none;background:transparent;font-size:11px;cursor:pointer;border-radius:8px;transition:all .2s;color:#888;white-space:nowrap}
+.stb.sa{background:#fff;color:#1a1a1a;font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.sbox{background:#fff;border-radius:13px;padding:14px;margin-bottom:14px;box-shadow:0 1px 5px rgba(0,0,0,.06)}
+.pb{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-left:5px}
+.fu{background:#fff;border-radius:15px;padding:26px;text-align:center;cursor:pointer;border:2px dashed #ddd;margin-bottom:14px;display:flex;flex-direction:column;align-items:center}
+.fi4{background:#fff;border-radius:11px;padding:11px 13px;display:flex;align-items:flex-start;gap:11px;box-shadow:0 1px 4px rgba(0,0,0,.05);margin-bottom:7px}
+.ma{width:100%;min-height:200px;padding:13px;border:1.5px solid #e8e4dc;border-radius:13px;font-size:15px;line-height:1.9;background:#fff;outline:none;resize:vertical}
+.dc{background:#fff;border-radius:13px;padding:14px;margin-bottom:11px;box-shadow:0 1px 5px rgba(0,0,0,.06)}
+.mr{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #fafaf8;align-items:flex-start}
+.lb{text-align:center;padding:36px 20px;color:#aaa}
+.sp{width:34px;height:34px;border:3px solid #eee;border-top-color:#1a1a1a;border-radius:50%;animation:sp2 1s linear infinite;margin:0 auto 11px}
+@keyframes sp2{to{transform:rotate(360deg)}}
+.err{background:#fce4ec;border-radius:11px;padding:13px;color:#c62828;font-size:13px}
+.rbadge{font-size:10px;background:#e8f5e9;color:#2e7d32;padding:2px 7px;border-radius:20px;font-weight:600;margin-left:5px}
+.hov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;overflow-y:auto;padding:18px 14px 36px}
+.hbox{background:#fff;border-radius:18px;padding:22px 18px;max-width:480px;margin:0 auto}
+.hs{display:flex;gap:13px;align-items:flex-start;margin-bottom:18px}
+.hn{width:30px;height:30px;background:#1a1a1a;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+/* receipt check row */
+.rci{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f5f5f5;cursor:pointer}
+.rck{width:22px;height:22px;border-radius:6px;border:2px solid #ccc;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.rck.on{border-color:#1a1a1a;background:#1a1a1a}
 </style>
 </head>
 <body>
 <div id="app">
-  <!-- Header -->
-  <div class="header">
+  <div class="hdr">
     <div class="h-top">
-      <div>
-        <div class="logo">🏠 おうち冷蔵庫</div>
-        <div class="logo-sub">FAMILY FRIDGE MANAGER</div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <div id="alert-badge" class="alert-badge" style="display:none" onclick="switchTab('items')"></div>
-        <button class="btn-ghost" style="padding:6px 12px;font-size:12px" onclick="showHelp()">❓ 使い方</button>
+      <div><div class="logo">🏠 おうち冷蔵庫</div><div class="logo-sub">FAMILY FRIDGE MANAGER</div></div>
+      <div style="display:flex;gap:7px;align-items:center">
+        <div id="abadge" class="abadge" onclick="switchTab('items')"></div>
+        <button class="bg" style="padding:5px 11px;font-size:12px" onclick="showHelp()">❓ 使い方</button>
       </div>
     </div>
     <nav>
-      <button class="nav-btn active" id="nav-home" onclick="switchTab('home')"><span class="nav-icon">🏠</span><span>ホーム</span></button>
-      <button class="nav-btn" id="nav-items" onclick="switchTab('items')"><span class="nav-icon">🧊</span><span>在庫</span></button>
-      <button class="nav-btn" id="nav-shopping" onclick="switchTab('shopping')"><span class="nav-icon">🛒</span><span>買い物</span></button>
-      <button class="nav-btn" id="nav-meals" onclick="switchTab('meals')"><span class="nav-icon">🍳</span><span>献立</span></button>
+      <button class="nb act" id="nb-home"     onclick="switchTab('home')">    <span class="ni">🏠</span><span>ホーム</span></button>
+      <button class="nb"     id="nb-items"    onclick="switchTab('items')">   <span class="ni">🧊</span><span>在庫</span></button>
+      <button class="nb"     id="nb-shopping" onclick="switchTab('shopping')"><span class="ni">🛒</span><span>買い物</span></button>
+      <button class="nb"     id="nb-meals"    onclick="switchTab('meals')">   <span class="ni">🍳</span><span>献立</span></button>
     </nav>
   </div>
-
-  <main id="main-content"></main>
+  <main id="mc"></main>
 </div>
 
-<!-- Help Modal -->
-<div id="help-overlay" class="help-overlay" style="display:none" onclick="hideHelp()">
-  <div class="help-box" onclick="event.stopPropagation()">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <div style="font-size:20px;font-weight:700">📖 使い方ガイド</div>
-      <button class="xbtn" onclick="hideHelp()" style="font-size:26px">×</button>
+<div id="hov" class="hov" style="display:none" onclick="hideHelp()">
+  <div class="hbox" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <div style="font-size:18px;font-weight:700">📖 使い方ガイド</div>
+      <button class="xb" onclick="hideHelp()" style="font-size:26px;color:#888">×</button>
     </div>
-
-    <div class="help-step">
-      <div class="help-num">1</div>
-      <div>
-        <div style="font-weight:700;margin-bottom:4px">🧊 食材を登録する</div>
-        <div style="font-size:13px;color:#555;line-height:1.7">「在庫」タブを開いて画面下の<b>「＋ 食材を追加」</b>をタップ。カテゴリを選ぶと食材一覧が出るので、タップするだけで登録できます。消費期限は自動入力されるので確認するだけでOK！</div>
-      </div>
-    </div>
-
-    <div class="help-step">
-      <div class="help-num">2</div>
-      <div>
-        <div style="font-weight:700;margin-bottom:4px">🏠 ホームで状況確認</div>
-        <div style="font-size:13px;color:#555;line-height:1.7">「ホーム」タブでは3台の冷蔵庫の状況と、<b>今すぐ使うべき食材</b>（期限間近）が一目でわかります。⚠️マークは期限2日以内のサインです！</div>
-      </div>
-    </div>
-
-    <div class="help-step">
-      <div class="help-num">3</div>
-      <div>
-        <div style="font-weight:700;margin-bottom:4px">🛒 買い物リストを使う</div>
-        <div style="font-size:13px;color:#555;line-height:1.7">「買い物」タブに3つの機能があります：<br>
-        ・<b>リスト</b>：買うものをまとめる<br>
-        ・<b>チラシ読取</b>：写真を撮るとAIが安い商品を教えてくれる<br>
-        ・<b>メモ</b>：自由書き→リストに変換できる</div>
-      </div>
-    </div>
-
-    <div class="help-step">
-      <div class="help-num">4</div>
-      <div>
-        <div style="font-weight:700;margin-bottom:4px">🍳 献立を作ってもらう</div>
-        <div style="font-size:13px;color:#555;line-height:1.7">「献立」タブのボタンを押すと、<b>期限の近い食材を優先</b>した3日分の献立をAIが提案します。食材ロスゼロを目指せます！</div>
-      </div>
-    </div>
-
-    <div style="background:#f0fdf4;border-radius:12px;padding:14px;font-size:13px;line-height:1.7">
-      💡 <b>データは自動保存</b>されます。ブラウザを閉じても消えません。<br>
-      家族への共有は、このページのURLをLINEで送るだけ！
-    </div>
-
-    <button class="btn-primary" style="width:100%;margin-top:20px" onclick="hideHelp()">とじる</button>
+    <div class="hs"><div class="hn">1</div><div><b>🧊 食材を登録</b><br><span style="font-size:13px;color:#555;line-height:1.7">「在庫」→「＋食材を追加」。カテゴリを選ぶと食材ボタンが並びます。タップするだけで数量・期限が自動入力されます！</span></div></div>
+    <div class="hs"><div class="hn">2</div><div><b>➕➖ 数量をすぐ変える</b><br><span style="font-size:13px;color:#555;line-height:1.7">在庫一覧の「−」「＋」ボタンで数量を変更。0になると削除確認が出ます。料理で使ったらすぐ「−」を押すだけ！</span></div></div>
+    <div class="hs"><div class="hn">3</div><div><b>🧾 レシートを読み込む</b><br><span style="font-size:13px;color:#555;line-height:1.7">「買い物」→「レシート」タブ。買い物のレシートを撮影するとAIが食材を自動認識。確認してから一括登録できます！</span></div></div>
+    <div class="hs"><div class="hn">4</div><div><b>📸 チラシでお得情報</b><br><span style="font-size:13px;color:#555;line-height:1.7">「買い物」→「チラシ」タブ。チラシを撮影するとAIが安い商品を分析して、買い物リストに追加できます。</span></div></div>
+    <div class="hs"><div class="hn">5</div><div><b>🍳 AI献立</b><br><span style="font-size:13px;color:#555;line-height:1.7">「献立」タブのボタンを押すだけ。期限の近い食材を優先した3日分の朝昼夕の献立をAIが提案します。</span></div></div>
+    <div style="background:#f0fdf4;border-radius:11px;padding:13px;font-size:13px;line-height:1.7">💾 データは自動保存。URLを家族にLINEで送れば共有できます！</div>
+    <button class="bp" style="width:100%;margin-top:18px" onclick="hideHelp()">とじる</button>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════════════════
-const FRIDGES = [
-  {id:1, name:"冷蔵庫 A", icon:"🧊", color:"#4fc3f7", dark:"#0288d1"},
-  {id:2, name:"冷蔵庫 B", icon:"❄️",  color:"#81c784", dark:"#388e3c"},
-  {id:3, name:"冷蔵庫 C", icon:"🫙",  color:"#ffb74d", dark:"#f57c00"},
+// ══════ CONSTANTS ══════
+const FRIDGES=[
+  {id:1,name:"冷蔵庫 A",icon:"🧊",color:"#4fc3f7",dark:"#0288d1"},
+  {id:2,name:"冷蔵庫 B",icon:"❄️", color:"#81c784",dark:"#388e3c"},
+  {id:3,name:"冷蔵庫 C",icon:"🫙", color:"#ffb74d",dark:"#f57c00"},
 ];
-const CATEGORIES = [
-  {id:"vegetable", label:"野菜・果物", icon:"🥦"},
-  {id:"meat",      label:"肉・魚",    icon:"🥩"},
-  {id:"dairy",     label:"乳製品",    icon:"🥛"},
-  {id:"drink",     label:"飲み物",    icon:"🧃"},
-  {id:"seasoning", label:"調味料",    icon:"🧂"},
-  {id:"frozen",    label:"冷凍食品",  icon:"🧊"},
-  {id:"leftovers", label:"作り置き",  icon:"🍱"},
-  {id:"other",     label:"その他",    icon:"📦"},
+const CATS=[
+  {id:"vegetable",label:"野菜・果物",icon:"🥦"},{id:"meat",label:"肉・魚",icon:"🥩"},
+  {id:"dairy",label:"乳製品",icon:"🥛"},{id:"drink",label:"飲み物",icon:"🧃"},
+  {id:"seasoning",label:"調味料",icon:"🧂"},{id:"frozen",label:"冷凍食品",icon:"🧊"},
+  {id:"leftovers",label:"作り置き",icon:"🍱"},{id:"other",label:"その他",icon:"📦"},
 ];
-const UNITS = ["個","本","袋","パック","g","kg","ml","L","枚","束","切れ","人分"];
-const PRESETS = {
-  dairy:[
-    {name:"牛乳",unit:"L",qty:1,exp:7},{name:"卵",unit:"個",qty:6,exp:14},
-    {name:"ヨーグルト",unit:"個",qty:2,exp:10},{name:"チーズ",unit:"袋",qty:1,exp:21},
-    {name:"バター",unit:"個",qty:1,exp:30},{name:"生クリーム",unit:"パック",qty:1,exp:5},
-    {name:"豆乳",unit:"本",qty:1,exp:7},{name:"プリン",unit:"個",qty:3,exp:7},
-  ],
-  vegetable:[
-    {name:"キャベツ",unit:"個",qty:1,exp:7},{name:"にんじん",unit:"本",qty:3,exp:14},
-    {name:"ほうれん草",unit:"袋",qty:1,exp:4},{name:"もやし",unit:"袋",qty:1,exp:2},
-    {name:"玉ねぎ",unit:"個",qty:3,exp:14},{name:"トマト",unit:"個",qty:3,exp:5},
-    {name:"きゅうり",unit:"本",qty:3,exp:5},{name:"レタス",unit:"個",qty:1,exp:5},
-    {name:"ブロッコリー",unit:"個",qty:1,exp:5},{name:"じゃがいも",unit:"個",qty:3,exp:14},
-    {name:"りんご",unit:"個",qty:3,exp:14},{name:"バナナ",unit:"本",qty:5,exp:5},
-  ],
-  meat:[
-    {name:"鶏むね肉",unit:"g",qty:300,exp:3},{name:"鶏もも肉",unit:"g",qty:300,exp:3},
-    {name:"豚バラ肉",unit:"g",qty:200,exp:3},{name:"豚こま肉",unit:"パック",qty:1,exp:3},
-    {name:"牛肉",unit:"g",qty:200,exp:3},{name:"ひき肉",unit:"g",qty:200,exp:2},
-    {name:"鮭",unit:"切れ",qty:2,exp:2},{name:"さば",unit:"切れ",qty:2,exp:2},
-    {name:"えび",unit:"g",qty:150,exp:2},{name:"ウインナー",unit:"袋",qty:1,exp:14},
-    {name:"ベーコン",unit:"袋",qty:1,exp:14},
-  ],
-  drink:[
-    {name:"麦茶",unit:"L",qty:2,exp:3},{name:"オレンジジュース",unit:"L",qty:1,exp:7},
-    {name:"炭酸水",unit:"本",qty:6,exp:30},{name:"スポーツドリンク",unit:"本",qty:2,exp:30},
-    {name:"コーヒー(紙パック)",unit:"本",qty:2,exp:30},
-  ],
-  seasoning:[
-    {name:"醤油",unit:"本",qty:1,exp:90},{name:"みりん",unit:"本",qty:1,exp:90},
-    {name:"マヨネーズ",unit:"本",qty:1,exp:60},{name:"ケチャップ",unit:"本",qty:1,exp:60},
-    {name:"味噌",unit:"袋",qty:1,exp:60},{name:"ポン酢",unit:"本",qty:1,exp:90},
-    {name:"ドレッシング",unit:"本",qty:1,exp:60},
-  ],
-  frozen:[
-    {name:"冷凍うどん",unit:"個",qty:3,exp:60},{name:"冷凍餃子",unit:"袋",qty:1,exp:60},
-    {name:"冷凍枝豆",unit:"袋",qty:1,exp:60},{name:"アイスクリーム",unit:"個",qty:2,exp:30},
-    {name:"冷凍チャーハン",unit:"袋",qty:1,exp:60},{name:"冷凍ブロッコリー",unit:"袋",qty:1,exp:60},
-  ],
-  leftovers:[
-    {name:"カレー",unit:"人分",qty:2,exp:2},{name:"煮物",unit:"人分",qty:2,exp:3},
-    {name:"炒め物",unit:"人分",qty:2,exp:2},{name:"スープ",unit:"人分",qty:2,exp:2},
-    {name:"ご飯",unit:"人分",qty:3,exp:1},
-  ],
-  other:[
-    {name:"豆腐",unit:"個",qty:2,exp:5},{name:"こんにゃく",unit:"個",qty:1,exp:14},
-    {name:"納豆",unit:"パック",qty:3,exp:7},{name:"食パン",unit:"袋",qty:1,exp:5},
-    {name:"もずく",unit:"個",qty:3,exp:14},
-  ],
+const UNITS=["個","本","袋","パック","g","kg","ml","L","枚","束","切れ","人分"];
+const PRESETS={
+  dairy:[{n:"牛乳",u:"L",q:1,e:7},{n:"卵",u:"個",q:6,e:14},{n:"ヨーグルト",u:"個",q:2,e:10},
+    {n:"チーズ",u:"袋",q:1,e:21},{n:"バター",u:"個",q:1,e:30},{n:"生クリーム",u:"パック",q:1,e:5},
+    {n:"豆乳",u:"本",q:1,e:7},{n:"プリン",u:"個",q:3,e:7}],
+  vegetable:[{n:"キャベツ",u:"個",q:1,e:7},{n:"にんじん",u:"本",q:3,e:14},{n:"ほうれん草",u:"袋",q:1,e:4},
+    {n:"もやし",u:"袋",q:1,e:2},{n:"玉ねぎ",u:"個",q:3,e:14},{n:"トマト",u:"個",q:3,e:5},
+    {n:"きゅうり",u:"本",q:3,e:5},{n:"レタス",u:"個",q:1,e:5},{n:"ブロッコリー",u:"個",q:1,e:5},
+    {n:"じゃがいも",u:"個",q:3,e:14},{n:"りんご",u:"個",q:3,e:14},{n:"バナナ",u:"本",q:5,e:5}],
+  meat:[{n:"鶏むね肉",u:"g",q:300,e:3},{n:"鶏もも肉",u:"g",q:300,e:3},{n:"豚バラ肉",u:"g",q:200,e:3},
+    {n:"豚こま肉",u:"パック",q:1,e:3},{n:"牛肉",u:"g",q:200,e:3},{n:"ひき肉",u:"g",q:200,e:2},
+    {n:"鮭",u:"切れ",q:2,e:2},{n:"さば",u:"切れ",q:2,e:2},{n:"えび",u:"g",q:150,e:2},
+    {n:"ウインナー",u:"袋",q:1,e:14},{n:"ベーコン",u:"袋",q:1,e:14}],
+  drink:[{n:"麦茶",u:"L",q:2,e:3},{n:"オレンジジュース",u:"L",q:1,e:7},
+    {n:"炭酸水",u:"本",q:6,e:30},{n:"スポーツドリンク",u:"本",q:2,e:30}],
+  seasoning:[{n:"醤油",u:"本",q:1,e:90},{n:"みりん",u:"本",q:1,e:90},{n:"マヨネーズ",u:"本",q:1,e:60},
+    {n:"ケチャップ",u:"本",q:1,e:60},{n:"味噌",u:"袋",q:1,e:60},{n:"ポン酢",u:"本",q:1,e:90},
+    {n:"ドレッシング",u:"本",q:1,e:60}],
+  frozen:[{n:"冷凍うどん",u:"個",q:3,e:60},{n:"冷凍餃子",u:"袋",q:1,e:60},{n:"冷凍枝豆",u:"袋",q:1,e:60},
+    {n:"アイスクリーム",u:"個",q:2,e:30},{n:"冷凍チャーハン",u:"袋",q:1,e:60}],
+  leftovers:[{n:"カレー",u:"人分",q:2,e:2},{n:"煮物",u:"人分",q:2,e:3},
+    {n:"スープ",u:"人分",q:2,e:2},{n:"ご飯",u:"人分",q:3,e:1}],
+  other:[{n:"豆腐",u:"個",q:2,e:5},{n:"こんにゃく",u:"個",q:1,e:14},
+    {n:"納豆",u:"パック",q:3,e:7},{n:"食パン",u:"袋",q:1,e:5},{n:"もずく",u:"個",q:3,e:14}],
 };
 
-function daysFromNow(d){const dt=new Date();dt.setDate(dt.getDate()+d);return dt.toISOString().split('T')[0]}
-function daysLeft(s){const t=new Date();t.setHours(0,0,0,0);const e=new Date(s);e.setHours(0,0,0,0);return Math.round((e-t)/86400000)}
-function expiryColor(d){if(d<0)return{bg:"#b71c1c",tx:"#fff"};if(d===0)return{bg:"#e53935",tx:"#fff"};if(d<=2)return{bg:"#ff6f00",tx:"#fff"};if(d<=5)return{bg:"#f9a825",tx:"#fff"};return{bg:"#e8f5e9",tx:"#2e7d32"}}
-function expiryLabel(d){if(d<0)return`${Math.abs(d)}日超過！`;if(d===0)return"今日まで！";if(d===1)return"明日まで";return`${d}日`}
-function getCat(id){return CATEGORIES.find(c=>c.id===id)||CATEGORIES[7]}
-function getFridge(id){return FRIDGES.find(f=>f.id===id)||FRIDGES[0]}
-function todayStr(){return new Date().toISOString().split('T')[0]}
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+// ══════ HELPERS ══════
+function dfn(d){const dt=new Date();dt.setDate(dt.getDate()+d);return dt.toISOString().split('T')[0]}
+function dl(s){const t=new Date();t.setHours(0,0,0,0);const e=new Date(s);e.setHours(0,0,0,0);return Math.round((e-t)/86400000)}
+function ec(d){if(d<0)return{bg:"#b71c1c",tx:"#fff"};if(d===0)return{bg:"#e53935",tx:"#fff"};if(d<=2)return{bg:"#ff6f00",tx:"#fff"};if(d<=5)return{bg:"#f9a825",tx:"#fff"};return{bg:"#e8f5e9",tx:"#2e7d32"}}
+function el(d){if(d<0)return`${Math.abs(d)}日超過！`;if(d===0)return"今日まで！";if(d===1)return"明日まで";return`${d}日`}
+function gc(id){return CATS.find(c=>c.id===id)||CATS[7]}
+function gf(id){return FRIDGES.find(f=>f.id===id)||FRIDGES[0]}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function uid(){return Date.now()+Math.floor(Math.random()*9999)}
 
-// ═══════════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════════
-let state = {
-  tab: 'home',
-  items: [
-    {id:1,name:"牛乳",fridgeId:1,category:"dairy",qty:1,unit:"L",expiry:daysFromNow(2),note:""},
-    {id:2,name:"卵",fridgeId:1,category:"dairy",qty:6,unit:"個",expiry:daysFromNow(5),note:""},
-    {id:3,name:"豚肉",fridgeId:1,category:"meat",qty:1,unit:"パック",expiry:daysFromNow(1),note:"しゃぶしゃぶ用"},
-    {id:4,name:"ほうれん草",fridgeId:2,category:"vegetable",qty:1,unit:"袋",expiry:daysFromNow(3),note:""},
-    {id:5,name:"にんじん",fridgeId:2,category:"vegetable",qty:3,unit:"本",expiry:daysFromNow(7),note:""},
-    {id:6,name:"豆腐",fridgeId:2,category:"other",qty:2,unit:"個",expiry:daysFromNow(4),note:""},
-    {id:7,name:"チーズ",fridgeId:3,category:"dairy",qty:1,unit:"袋",expiry:daysFromNow(14),note:""},
-    {id:8,name:"冷凍うどん",fridgeId:3,category:"frozen",qty:3,unit:"個",expiry:daysFromNow(30),note:""},
-    {id:9,name:"もやし",fridgeId:1,category:"vegetable",qty:1,unit:"袋",expiry:daysFromNow(0),note:"今日まで！"},
+// ══════ STATE ══════
+const S={
+  tab:'home',
+  items:[
+    {id:1,name:"牛乳",   fridgeId:1,category:"dairy",   qty:1,unit:"L",   expiry:dfn(2),note:""},
+    {id:2,name:"卵",     fridgeId:1,category:"dairy",   qty:6,unit:"個",  expiry:dfn(5),note:""},
+    {id:3,name:"豚肉",   fridgeId:1,category:"meat",    qty:1,unit:"パック",expiry:dfn(1),note:"しゃぶしゃぶ用"},
+    {id:4,name:"ほうれん草",fridgeId:2,category:"vegetable",qty:1,unit:"袋",expiry:dfn(3),note:""},
+    {id:5,name:"にんじん", fridgeId:2,category:"vegetable",qty:3,unit:"本",expiry:dfn(7),note:""},
+    {id:6,name:"豆腐",   fridgeId:2,category:"other",   qty:2,unit:"個",  expiry:dfn(4),note:""},
+    {id:7,name:"チーズ",  fridgeId:3,category:"dairy",  qty:1,unit:"袋",  expiry:dfn(14),note:""},
+    {id:8,name:"冷凍うどん",fridgeId:3,category:"frozen",qty:3,unit:"個", expiry:dfn(30),note:""},
+    {id:9,name:"もやし",  fridgeId:1,category:"vegetable",qty:1,unit:"袋",expiry:dfn(0),note:""},
   ],
-  shopping: [
+  shopping:[
     {id:1,name:"食パン",qty:"1袋",done:false},
     {id:2,name:"ヨーグルト",qty:"2個",done:false},
   ],
-  memoText: "",
-  freq: {},
-  activeFridge: null,
-  searchQ: "",
-  shopTab: "list",
-  addItemOpen: false,
-  addShopOpen: false,
-  addForm: {name:"",fridgeId:1,category:"dairy",qty:1,unit:"個",expiry:daysFromNow(7),note:""},
-  shopForm: {name:"",qty:""},
-  shopSugg: null,
-  shopLoading: false,
-  flyerResult: null,
-  flyerLoading: false,
-  flyerPreview: null,
-  mealPlan: null,
-  mealLoading: false,
+  memo:"",freq:{},
+  fridge:null,q:"",
+  addOpen:false,
+  // ★ フォームは必ずS.formで管理。DOMから読み取らない
+  form:{name:"",fridgeId:1,category:"dairy",qty:1,unit:"個",expiry:dfn(7),note:""},
+  addShopOpen:false,shopForm:{name:"",qty:""},
+  shopTab:"list",shopSugg:null,shopLoading:false,
+  flyerResult:null,flyerLoading:false,flyerPreview:null,
+  receiptResult:null,receiptLoading:false,receiptPreview:null,receiptConfirm:null,
+  mealPlan:null,mealLoading:false,
 };
 
-// ═══════════════════════════════════════════════════════
-// STORAGE
-// ═══════════════════════════════════════════════════════
-function saveState(){
+// ══════ STORAGE ══════
+function save(){
   try{
-    localStorage.setItem('reizouko_items', JSON.stringify(state.items));
-    localStorage.setItem('reizouko_shop',  JSON.stringify(state.shopping));
-    localStorage.setItem('reizouko_memo',  state.memoText);
-    localStorage.setItem('reizouko_freq',  JSON.stringify(state.freq));
+    localStorage.setItem('rz3_items',JSON.stringify(S.items));
+    localStorage.setItem('rz3_shop', JSON.stringify(S.shopping));
+    localStorage.setItem('rz3_memo', S.memo);
+    localStorage.setItem('rz3_freq', JSON.stringify(S.freq));
   }catch(e){}
 }
-function loadState(){
+function loadSaved(){
   try{
-    const it=localStorage.getItem('reizouko_items');
-    const sh=localStorage.getItem('reizouko_shop');
-    const mo=localStorage.getItem('reizouko_memo');
-    const fr=localStorage.getItem('reizouko_freq');
-    if(it) state.items=JSON.parse(it);
-    if(sh) state.shopping=JSON.parse(sh);
-    if(mo) state.memoText=mo;
-    if(fr) state.freq=JSON.parse(fr);
+    const it=localStorage.getItem('rz3_items');const sh=localStorage.getItem('rz3_shop');
+    const mo=localStorage.getItem('rz3_memo');const fr=localStorage.getItem('rz3_freq');
+    if(it)S.items=JSON.parse(it);if(sh)S.shopping=JSON.parse(sh);
+    if(mo)S.memo=mo;if(fr)S.freq=JSON.parse(fr);
   }catch(e){}
 }
 
-// ═══════════════════════════════════════════════════════
-// RENDER
-// ═══════════════════════════════════════════════════════
-function render(){
-  const urgent = state.items.filter(i=>daysLeft(i.expiry)<=3).sort((a,b)=>daysLeft(a.expiry)-daysLeft(b.expiry));
-  // alert badge
-  const badge=document.getElementById('alert-badge');
-  if(urgent.length>0){badge.style.display='block';badge.textContent=`⚠️ ${urgent.length}件期限注意`}
-  else{badge.style.display='none'}
-  // nav
-  ['home','items','shopping','meals'].forEach(t=>{
-    document.getElementById('nav-'+t).className='nav-btn'+(state.tab===t?' active':'');
-  });
-  // main
-  const main=document.getElementById('main-content');
-  if(state.tab==='home')     main.innerHTML=renderHome(urgent);
-  else if(state.tab==='items')    main.innerHTML=renderItems();
-  else if(state.tab==='shopping') main.innerHTML=renderShopping();
-  else if(state.tab==='meals')    main.innerHTML=renderMeals();
+// ══════ RENDER ══════
+function R(){
+  const urg=S.items.filter(i=>dl(i.expiry)<=3);
+  const ab=document.getElementById('abadge');
+  if(urg.length>0){ab.style.display='block';ab.textContent=`⚠️ ${urg.length}件期限注意`}
+  else ab.style.display='none';
+  ['home','items','shopping','meals'].forEach(t=>document.getElementById('nb-'+t).className='nb'+(S.tab===t?' act':''));
+  const mc=document.getElementById('mc');
+  if(S.tab==='home')mc.innerHTML=rHome(urg);
+  else if(S.tab==='items')mc.innerHTML=rItems();
+  else if(S.tab==='shopping')mc.innerHTML=rShopping();
+  else if(S.tab==='meals')mc.innerHTML=rMeals();
 }
 
-// ── HOME ──────────────────────────────────────────────
-function renderHome(urgent){
-  const total=state.items.length;
-  const shopPending=state.shopping.filter(s=>!s.done).length;
-  const fridgeCnt=id=>state.items.filter(i=>i.fridgeId===id).length;
-  const fridgeUrg=id=>state.items.filter(i=>i.fridgeId===id&&daysLeft(i.expiry)<=3).length;
-
-  let urgHtml='';
-  if(urgent.length>0){
-    urgHtml=`<div class="sec-title">🔴 今すぐ使うべき食材</div>`;
-    urgent.forEach(item=>{
-      const d=daysLeft(item.expiry),col=expiryColor(d),cat=getCat(item.category),fr=getFridge(item.fridgeId);
-      urgHtml+=`<div class="urg-row">
-        <span style="font-size:22px">${cat.icon}</span>
-        <div style="flex:1"><b>${esc(item.name)}</b><div style="font-size:11px;color:#aaa">${fr.icon} ${esc(fr.name)}</div></div>
-        <div class="exp-badge" style="background:${col.bg};color:${col.tx}">${expiryLabel(d)}</div>
-      </div>`;
+function rHome(urg){
+  const tot=S.items.length,pend=S.shopping.filter(s=>!s.done).length;
+  let uH='';
+  if(urg.length>0){
+    uH='<div class="stitle">🔴 今すぐ使うべき食材</div>';
+    urg.forEach(i=>{const d=dl(i.expiry),c=ec(d),cat=gc(i.category),fr=gf(i.fridgeId);
+      uH+=`<div class="ur"><span style="font-size:21px">${cat.icon}</span>
+        <div style="flex:1"><b>${esc(i.name)}</b><div style="font-size:11px;color:#aaa">${fr.icon} ${esc(fr.name)}</div></div>
+        <div class="eb" style="background:${c.bg};color:${c.tx}">${el(d)}</div></div>`;
     });
-    urgHtml+=`<button class="btn-primary" style="width:100%;margin-top:4px;margin-bottom:8px" onclick="switchTab('meals');generateMeals()">🍳 この食材で献立を作る</button>`;
+    uH+=`<button class="bp" style="width:100%;margin-top:4px;margin-bottom:6px" onclick="switchTab('meals');genMeals()">🍳 この食材で献立を作る</button>`;
   }
-
   return `<div class="fade">
-    <div class="stats-row">
-      <div class="stat-card card" style="border-top:3px solid #4fc3f7">
-        <div class="stat-n">${total}</div><div class="stat-l">総在庫</div>
-      </div>
-      <div class="stat-card card" style="border-top:3px solid #e53935" onclick="switchTab('items')">
-        <div class="stat-n" style="color:${urgent.length>0?'#e53935':'inherit'}">${urgent.length}</div><div class="stat-l">期限間近</div>
-      </div>
-      <div class="stat-card card" style="border-top:3px solid #66bb6a">
-        <div class="stat-n">${shopPending}</div><div class="stat-l">買い物リスト</div>
-      </div>
+    <div class="srow">
+      <div class="sc card" style="border-top:3px solid #4fc3f7"><div class="sn">${tot}</div><div class="sl">総在庫</div></div>
+      <div class="sc card" style="border-top:3px solid #e53935" onclick="switchTab('items')"><div class="sn" style="color:${urg.length?'#e53935':'inherit'}">${urg.length}</div><div class="sl">期限間近</div></div>
+      <div class="sc card" style="border-top:3px solid #66bb6a"><div class="sn">${pend}</div><div class="sl">買い物リスト</div></div>
     </div>
-    <div class="sec-title">冷蔵庫の状況</div>
-    <div class="fridge-grid">
-      ${FRIDGES.map(f=>`
-        <div class="fridge-card card" style="border-color:${f.color}" onclick="setActiveFridge(${f.id})">
-          <div class="fridge-ico" style="background:${f.color}22">${f.icon}</div>
-          <div class="fridge-name">${f.name}</div>
-          <div class="fridge-cnt">${fridgeCnt(f.id)}品</div>
-          ${fridgeUrg(f.id)>0?`<div class="fridge-warn">⚠️ ${fridgeUrg(f.id)}件</div>`:''}
-        </div>`).join('')}
-    </div>
-    ${urgHtml}
-  </div>`;
+    <div class="stitle">冷蔵庫の状況</div>
+    <div class="fgrid">${FRIDGES.map(f=>`<div class="fc card" style="border-color:${f.color}" onclick="setFridge(${f.id})">
+      <div class="fi2" style="background:${f.color}22">${f.icon}</div>
+      <div class="fn">${f.name}</div><div class="fcnt">${S.items.filter(i=>i.fridgeId===f.id).length}品</div>
+      ${S.items.filter(i=>i.fridgeId===f.id&&dl(i.expiry)<=3).length>0?`<div class="fw">⚠️ ${S.items.filter(i=>i.fridgeId===f.id&&dl(i.expiry)<=3).length}件</div>`:''}</div>`).join('')}
+    </div>${uH}</div>`;
 }
 
-// ── ITEMS ──────────────────────────────────────────────
-function renderItems(){
-  let list = state.activeFridge ? state.items.filter(i=>i.fridgeId===state.activeFridge) : state.items;
-  if(state.searchQ) list=list.filter(i=>i.name.includes(state.searchQ)||i.note.includes(state.searchQ));
-  list=list.slice().sort((a,b)=>daysLeft(a.expiry)-daysLeft(b.expiry));
-
-  const itemsHtml = list.length===0
-    ? `<div class="empty">在庫がありません<br><small>下の「＋ 食材を追加」から登録してください</small></div>`
-    : list.map(item=>{
-        const d=daysLeft(item.expiry),col=expiryColor(d),cat=getCat(item.category),fr=getFridge(item.fridgeId);
-        return `<div class="irow" style="${d<=2?'border-left:3px solid '+col.bg:''}">
-          <div style="font-size:22px;width:32px;text-align:center;flex-shrink:0">${cat.icon}</div>
-          <div style="flex:1;min-width:0">
-            <div class="item-name">${esc(item.name)}</div>
-            <div class="item-meta">
-              <span style="color:${fr.dark}">${fr.icon} ${esc(fr.name)}</span>
-              <span style="color:#ccc">·</span><span>${item.qty}${esc(item.unit)}</span>
-              ${item.note?`<span style="color:#ccc">·</span><span style="color:#aaa">${esc(item.note)}</span>`:''}
-            </div>
+function rItems(){
+  let list=S.fridge?S.items.filter(i=>i.fridgeId===S.fridge):[...S.items];
+  if(S.q)list=list.filter(i=>i.name.includes(S.q)||i.note.includes(S.q));
+  list.sort((a,b)=>dl(a.expiry)-dl(b.expiry));
+  const iH=list.length===0?`<div class="empty">在庫がありません<br><small>「＋ 食材を追加」から登録してください</small></div>`
+    :list.map(i=>{const d=dl(i.expiry),c=ec(d),cat=gc(i.category),fr=gf(i.fridgeId);
+      return `<div class="ir" style="${d<=2?'border-left:3px solid '+c.bg:''}">
+        <div style="font-size:20px;width:28px;text-align:center;flex-shrink:0">${cat.icon}</div>
+        <div style="flex:1;min-width:0">
+          <div class="iname">${esc(i.name)}</div>
+          <div class="imeta"><span style="color:${fr.dark}">${fr.icon} ${esc(fr.name)}</span>
+            <span style="color:#ccc">·</span><span>${esc(i.unit)}</span>
+            ${i.note?`<span style="color:#ccc">·</span><span style="color:#aaa">${esc(i.note)}</span>`:''}
           </div>
-          <div class="exp-badge" style="background:${col.bg};color:${col.tx}">${expiryLabel(d)}</div>
-          <button class="xbtn" onclick="deleteItem(${item.id})">×</button>
-        </div>`;
-      }).join('');
-
-  const modalHtml = state.addItemOpen ? renderAddItemModal() : '';
-
+        </div>
+        <div class="qctrl">
+          <button class="qbtn" onclick="chQty(${i.id},-1)">−</button>
+          <div class="qnum">${i.qty}</div>
+          <button class="qbtn" onclick="chQty(${i.id},1)">＋</button>
+        </div>
+        <div class="eb" style="background:${c.bg};color:${c.tx};margin-left:6px">${el(d)}</div>
+        <button class="xb" onclick="delItem(${i.id})">×</button>
+      </div>`;}).join('');
   return `<div class="fade">
-    <div class="filter-row">
-      <button class="fbtn ${state.activeFridge===null?'factive':''}" onclick="setActiveFridge(null)">すべて</button>
-      ${FRIDGES.map(f=>`<button class="fbtn ${state.activeFridge===f.id?'factive':''}" style="${state.activeFridge===f.id?`border-color:${f.color};background:${f.color}22;color:${f.dark}`:''}" onclick="setActiveFridge(${f.id})">${f.icon} ${f.name}</button>`).join('')}
+    <div class="frow">
+      <button class="fbtn ${S.fridge===null?'fa':''}" onclick="setFridge(null)">すべて</button>
+      ${FRIDGES.map(f=>`<button class="fbtn ${S.fridge===f.id?'fa':''}"
+        style="${S.fridge===f.id?`border-color:${f.color};background:${f.color}22;color:${f.dark}`:''}"
+        onclick="setFridge(${f.id})">${f.icon} ${f.name}</button>`).join('')}
     </div>
-    <input class="sinput" placeholder="🔍 食材を検索..." value="${esc(state.searchQ)}" oninput="updateSearch(this.value)">
-    <div class="item-list">${itemsHtml}</div>
-    <button class="fab" onclick="openAddItem()">＋ 食材を追加</button>
-    ${modalHtml}
+    <input class="si" placeholder="🔍 食材を検索..." value="${esc(S.q)}" oninput="setQ(this.value)">
+    <div class="ilist">${iH}</div>
+    <button class="fab" onclick="openAdd()">＋ 食材を追加</button>
+    ${S.addOpen?rAddModal():''}
   </div>`;
 }
 
-function renderAddItemModal(){
-  const form=state.addForm;
-  const presets=PRESETS[form.category]||[];
-  const sortedPresets=[...presets].sort((a,b)=>(state.freq[b.name]||0)-(state.freq[a.name]||0));
-
-  const presetsHtml=sortedPresets.map(p=>{
-    const cnt=state.freq[p.name]||0;
-    const sel=form.name===p.name;
-    const cls=`preset-chip${sel?' selected':cnt>=3?' hot':cnt>=1?' used':''}`;
-    return `<button class="${cls}" onclick="selectPreset('${esc(p.name)}','${esc(p.unit)}',${p.qty},${p.exp})">
-      ${cnt>=3?'🔥':cnt>=1?'⭐':''}${esc(p.name)}${cnt>0?`<span style="font-size:10px;color:${sel?'rgba(255,255,255,.6)':'#bbb'}">${cnt}回</span>`:''}
-    </button>`;
-  }).join('');
-
-  const unitsHtml=UNITS.map(u=>`<option value="${u}"${form.unit===u?' selected':''}>${u}</option>`).join('');
-  const fridgeBtns=FRIDGES.map(fr=>`<button onclick="setFormFridge(${fr.id})" style="flex:1;padding:8px 4px;border:2px solid ${form.fridgeId===fr.id?fr.color:'#e0dbd2'};border-radius:10px;background:${form.fridgeId===fr.id?fr.color+'22':'#fff'};cursor:pointer;font-size:12px;text-align:center;transition:all .2s">${fr.icon}<br><small>${fr.name}</small></button>`).join('');
-  const catBtns=CATEGORIES.map(c=>`<button onclick="setFormCat('${c.id}')" style="padding:8px 12px;border-radius:20px;border:1.5px solid ${form.category===c.id?'#1a1a1a':'#e0dbd2'};background:${form.category===c.id?'#1a1a1a':'#fff'};color:${form.category===c.id?'#fff':'#555'};cursor:pointer;font-size:12px;transition:all .2s">${c.icon} ${c.label}</button>`).join('');
-
-  return `<div class="overlay" onclick="closeAddItem()">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="m-title">食材を追加</div>
-
-      <div class="lbl">① カテゴリを選択</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px">${catBtns}</div>
-
-      <div class="lbl">② よく買う食材から選ぶ ${Object.keys(state.freq).length>0?'<span style="font-size:11px;color:#aaa;margin-left:4px">🔥 購入回数順</span>':''}</div>
-      <div class="preset-wrap">${presetsHtml}</div>
-
-      <div class="field">
-        <label class="lbl">③ 食材名（直接入力もOK）</label>
-        <input class="fi" placeholder="例: その他の食材名" value="${esc(form.name)}" oninput="setFormName(this.value)">
+function rAddModal(){
+  const f=S.form;
+  const presets=(PRESETS[f.category]||[]).slice().sort((a,b)=>(S.freq[b.n]||0)-(S.freq[a.n]||0));
+  const pH=presets.map(p=>{const cnt=S.freq[p.n]||0,sel=f.name===p.n;
+    return `<button class="pc ${sel?'sel':cnt>=3?'hot':cnt>=1?'used':''}" onclick="selP('${esc(p.n)}','${esc(p.u)}',${p.q},${p.e})">
+      ${cnt>=3?'🔥':cnt>=1?'⭐':''}${esc(p.n)}${cnt>0?`<span style="font-size:10px;opacity:.6;margin-left:2px">${cnt}回</span>`:''}
+    </button>`;}).join('');
+  const cB=CATS.map(c=>`<button onclick="setFC('${c.id}')" style="padding:6px 10px;border-radius:20px;border:1.5px solid ${f.category===c.id?'#1a1a1a':'#e0dbd2'};background:${f.category===c.id?'#1a1a1a':'#fff'};color:${f.category===c.id?'#fff':'#555'};cursor:pointer;font-size:12px">${c.icon} ${c.label}</button>`).join('');
+  // ★ 冷蔵庫ボタン：setFF()でS.form.fridgeIdを更新してR()。ボタンのスタイルはS.form.fridgeIdを見る
+  const fB=FRIDGES.map(fr=>`<button onclick="setFF(${fr.id})" style="flex:1;padding:8px 4px;border:2px solid ${f.fridgeId===fr.id?fr.color:'#e0dbd2'};border-radius:10px;background:${f.fridgeId===fr.id?fr.color+'22':'#fff'};cursor:pointer;font-size:12px;text-align:center">${fr.icon}<br><small>${fr.name}</small></button>`).join('');
+  const uO=UNITS.map(u=>`<option value="${u}"${f.unit===u?' selected':''}>${u}</option>`).join('');
+  return `<div class="ov" onclick="closeAdd()">
+    <div class="mo" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="mt" style="margin:0">食材を追加</div>
+        <button class="xb" onclick="closeAdd()" style="font-size:26px;color:#888">×</button>
       </div>
-
-      <div class="lbl">④ 冷蔵庫</div>
-      <div style="display:flex;gap:8px;margin-bottom:14px">${fridgeBtns}</div>
-
+      <div class="lbl">① カテゴリ</div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px">${cB}</div>
+      <div class="lbl">② よく使う食材から選ぶ${Object.keys(S.freq).length>0?' <span style="font-size:10px;color:#aaa">🔥回数順</span>':''}</div>
+      <div class="pw">${pH}</div>
+      <div class="field"><label class="lbl">③ 食材名（直接入力もOK）</label>
+        <input class="fi3" placeholder="例: その他の食材" value="${esc(f.name)}" oninput="S.form.name=this.value"></div>
+      <div class="lbl">④ 冷蔵庫 — 現在の選択: <b>${gf(f.fridgeId).icon} ${gf(f.fridgeId).name}</b></div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">${fB}</div>
       <div style="display:flex;gap:8px">
-        <div class="field" style="flex:1">
-          <label class="lbl">数量</label>
-          <input class="fi" type="number" min="0" value="${form.qty}" oninput="setFormQty(this.value)">
-        </div>
-        <div class="field" style="flex:1">
-          <label class="lbl">単位</label>
-          <select class="fi" onchange="setFormUnit(this.value)">${unitsHtml}</select>
-        </div>
+        <div class="field" style="flex:1"><label class="lbl">数量</label>
+          <input class="fi3" type="number" min="0.1" step="any" value="${f.qty}" oninput="S.form.qty=parseFloat(this.value)||1"></div>
+        <div class="field" style="flex:1"><label class="lbl">単位</label>
+          <select class="fi3" onchange="S.form.unit=this.value">${uO}</select></div>
       </div>
-
-      <div class="field">
-        <label class="lbl">消費期限</label>
-        <input class="fi" type="date" value="${form.expiry}" onchange="setFormExpiry(this.value)">
-      </div>
-
-      <div class="field">
-        <label class="lbl">メモ（任意）</label>
-        <input class="fi" placeholder="例: しゃぶしゃぶ用" value="${esc(form.note)}" oninput="setFormNote(this.value)">
-      </div>
-
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button class="btn-ghost" style="flex:1" onclick="closeAddItem()">キャンセル</button>
-        <button class="btn-primary" style="flex:2" onclick="addItem()" ${!form.name.trim()?'disabled':''}>追加する</button>
+      <div class="field"><label class="lbl">消費期限</label>
+        <input class="fi3" type="date" value="${f.expiry}" onchange="S.form.expiry=this.value"></div>
+      <div class="field"><label class="lbl">メモ（任意）</label>
+        <input class="fi3" placeholder="例: しゃぶしゃぶ用" value="${esc(f.note)}" oninput="S.form.note=this.value"></div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <button class="bg" style="flex:1" onclick="closeAdd()">キャンセル</button>
+        <button class="bp" style="flex:2" onclick="addItem()" ${!f.name.trim()?'disabled':''}>✅ 追加する</button>
       </div>
     </div>
   </div>`;
 }
 
-// ── SHOPPING ──────────────────────────────────────────
-function renderShopping(){
-  const t=state.shopTab;
-  let content='';
-
+function rShopping(){
+  const t=S.shopTab;let body='';
   if(t==='list'){
-    const pending=state.shopping.filter(s=>!s.done).length;
-    const suggHtml = state.shopLoading
-      ? `<div class="load-box"><div class="spin"></div><p>分析中...</p></div>`
-      : state.shopSugg && !state.shopSugg.error
-      ? `<div class="sugg-box">
-          <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#555">🤖 AIの購入提案</div>
-          ${state.shopSugg.items.map(s=>`
-            <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid #f5f5f5">
-              <div style="flex:1">
-                <b style="font-size:14px">${esc(s.name)}</b>
-                <span class="p-badge" style="background:${s.priority==='高'?'#ffebee':s.priority==='中'?'#fff8e1':'#f1f8e9'};color:${s.priority==='高'?'#c62828':s.priority==='中'?'#f57f17':'#33691e'}">${s.priority}</span>
-                <div style="font-size:12px;color:#888;margin-top:2px">${esc(s.reason)}</div>
-              </div>
-              <button class="btn-primary" style="font-size:12px;padding:6px 12px;flex-shrink:0" onclick="addSuggestedToShop('${esc(s.name)}')">追加</button>
-            </div>`).join('')}
-        </div>`
-      : state.shopSugg?.error ? `<div class="err-box">提案の取得に失敗しました</div>` : '';
-
-    const listHtml = state.shopping.length===0
-      ? `<div class="empty">リストは空です</div>`
-      : state.shopping.map(s=>`
-          <div class="irow" style="${s.done?'opacity:.45':''}">
-            <input type="checkbox" ${s.done?'checked':''} onchange="toggleShop(${s.id})" style="width:20px;height:20px;cursor:pointer;flex-shrink:0">
+    const pend=S.shopping.filter(s=>!s.done).length;
+    const sH=S.shopLoading?`<div class="lb"><div class="sp"></div><p>分析中...</p></div>`
+      :S.shopSugg&&!S.shopSugg.error?`<div class="sbox"><div style="font-size:13px;font-weight:700;margin-bottom:10px;color:#555">🤖 AIの購入提案</div>
+        ${S.shopSugg.items.map(s=>`<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #f5f5f5">
+          <div style="flex:1"><b style="font-size:13px">${esc(s.name)}</b>
+            <span class="pb" style="background:${s.priority==='高'?'#ffebee':s.priority==='中'?'#fff8e1':'#f1f8e9'};color:${s.priority==='高'?'#c62828':s.priority==='中'?'#f57f17':'#33691e'}">${s.priority}</span>
+            <div style="font-size:11px;color:#888;margin-top:1px">${esc(s.reason)}</div></div>
+          <button class="bp" style="font-size:12px;padding:5px 11px;flex-shrink:0" onclick="addSugg('${esc(s.name)}')">追加</button>
+        </div>`).join('')}</div>`
+      :S.shopSugg?.error?`<div class="err">提案の取得に失敗しました</div>`:'';
+    const lH=S.shopping.length===0?`<div class="empty">リストは空です</div>`
+      :S.shopping.map(s=>`<div class="ir" style="${s.done?'opacity:.4':''}">
+          <input type="checkbox" ${s.done?'checked':''} onchange="togShop(${s.id})" style="width:20px;height:20px;cursor:pointer;flex-shrink:0">
+          <div style="flex:1"><div style="font-size:14px;font-weight:600;text-decoration:${s.done?'line-through':'none'}">${esc(s.name)}</div>
+            ${s.qty?`<div style="font-size:11px;color:#aaa">${esc(s.qty)}</div>`:''}
+          </div><button class="xb" onclick="delShop(${s.id})">×</button></div>`).join('');
+    body=`<div style="display:flex;gap:8px;margin-bottom:13px">
+        <button class="bp" style="flex:1" onclick="getShopSugg()" ${S.shopLoading?'disabled':''}>🤖 AI提案</button>
+        <button class="bg" onclick="openAddShop()">＋ 追加</button>
+      </div>${sH}
+      <div class="stitle">買い物リスト（${pend}件未購入）</div>
+      <div class="ilist">${lH}</div>
+      ${S.shopping.filter(s=>s.done).length>0?`<button class="bg" style="width:100%;margin-top:8px" onclick="clearDone()">✓ 購入済みをクリア</button>`:''}
+      ${S.addShopOpen?rAddShopMo():''}`;
+  }
+  else if(t==='receipt'){
+    let rH='';
+    if(S.receiptLoading){rH=`<div class="lb"><div class="sp"></div><p>レシートを解析中...<br><small>食材を自動認識しています</small></p></div>`;}
+    else if(S.receiptConfirm){
+      rH=`<div class="sbox">
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">🧾 認識された食材</div>
+        <div style="font-size:12px;color:#aaa;margin-bottom:11px">タップで選択/解除 → 「在庫に追加」で一括登録</div>
+        ${S.receiptConfirm.map((item,i)=>{const fr=gf(item.fridgeId);
+          return `<div class="rci" onclick="togRC(${i})">
+            <div class="rck ${item.selected?'on':''}">${item.selected?'<span style="color:#fff;font-size:13px">✓</span>':''}</div>
             <div style="flex:1">
-              <div style="font-size:14px;font-weight:600;text-decoration:${s.done?'line-through':'none'}">${esc(s.name)}</div>
-              ${s.qty?`<div style="font-size:12px;color:#aaa">${esc(s.qty)}</div>`:''}
+              <b style="font-size:13px">${esc(item.name)}</b>
+              <span class="rbadge">${fr.icon} ${fr.name}</span>
+              <div style="font-size:11px;color:#888;margin-top:1px">${item.qty}${esc(item.unit)} · 期限: ${esc(item.expiry)}</div>
             </div>
-            <button class="xbtn" onclick="deleteShop(${s.id})">×</button>
-          </div>`).join('');
-
-    content=`
-      <div style="display:flex;gap:8px;margin-bottom:14px">
-        <button class="btn-primary" style="flex:1" onclick="getShopSugg()" ${state.shopLoading?'disabled':''}>🤖 AI提案</button>
-        <button class="btn-ghost" onclick="openAddShop()">＋ 追加</button>
+            <button onclick="event.stopPropagation();edRC(${i})" style="padding:4px 8px;border:1px solid #e0dbd2;border-radius:8px;background:#fff;font-size:11px;cursor:pointer;flex-shrink:0">冷蔵庫変更</button>
+          </div>`;}).join('')}
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="bg" style="flex:1" onclick="S.receiptConfirm=null;R()">キャンセル</button>
+          <button class="bp" style="flex:2" onclick="bulkAdd()">✅ 在庫に追加 (${S.receiptConfirm.filter(i=>i.selected).length}件)</button>
+        </div></div>`;
+    } else if(S.receiptResult?.error){
+      rH=`<div class="err">解析に失敗しました。レシートが鮮明に写るよう撮影してください。</div>`;
+    } else {
+      rH=`<div class="empty">レシートを撮影すると<br>AIが食材を自動認識して<br>在庫に一括登録します<br><br><b>📌 撮影のコツ</b><br>明るい場所で文字が読めるよう<br>まっすぐ撮影してください</div>`;
+    }
+    body=`${!S.receiptConfirm?`<div class="fu" onclick="document.getElementById('rec-inp').click()">
+        ${S.receiptPreview?`<img src="${S.receiptPreview}" style="max-height:160px;max-width:100%;border-radius:8px;object-fit:contain;margin-bottom:9px">`:''}
+        <div style="font-size:34px;margin-bottom:7px">🧾</div>
+        <div style="font-size:14px;font-weight:600">${S.receiptPreview?'別の写真に変更':'レシートを撮影・アップロード'}</div>
+        <div style="font-size:12px;color:#aaa;margin-top:3px">タップして撮影 or ファイル選択</div>
       </div>
-      ${suggHtml}
-      <div class="sec-title">買い物リスト（${pending}件未購入）</div>
-      <div class="item-list">${listHtml}</div>
-      ${state.shopping.filter(s=>s.done).length>0?`<button class="btn-ghost" style="width:100%;margin-top:8px" onclick="clearDoneShop()">✓ 購入済みをクリア</button>`:''}
-      ${state.addShopOpen?renderAddShopModal():''}`;
+      <input type="file" id="rec-inp" accept="image/*" style="display:none" onchange="handleReceipt(this)">`:''} ${rH}`;
   }
-
   else if(t==='flyer'){
-    const resultHtml = state.flyerLoading
-      ? `<div class="load-box"><div class="spin"></div><p>チラシを解析中...</p></div>`
-      : state.flyerResult && !state.flyerResult.error
-      ? `${state.flyerResult.summary?`<div style="background:#e8f5e9;border-radius:12px;padding:12px;margin-bottom:12px;font-size:13px">📋 <b>チラシ概要：</b>${esc(state.flyerResult.summary)}</div>`:''}
-         ${state.flyerResult.bestDeal?`<div style="background:#fff8e1;border-radius:12px;padding:12px;margin-bottom:12px;font-size:13px">🏆 <b>最もお得：</b>${esc(state.flyerResult.bestDeal)}</div>`:''}
-         <div class="sec-title">商品リスト</div>
-         ${(state.flyerResult.items||[]).map(item=>`
-           <div class="flyer-item" style="border-left:${item.recommend?'3px solid #f57c00':'3px solid transparent'}">
-             <div style="flex:1">
-               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                 <span style="font-size:14px;font-weight:600">${esc(item.name)}</span>
-                 ${item.recommend?`<span style="font-size:11px;background:#fff3e0;color:#e65100;padding:2px 8px;border-radius:20px;font-weight:600">🔥 おすすめ</span>`:''}
-                 ${item.discount?`<span style="font-size:11px;background:#fce4ec;color:#c62828;padding:2px 8px;border-radius:20px;font-weight:600">${esc(item.discount)}</span>`:''}
-               </div>
-               <div style="display:flex;gap:8px;margin-top:4px;align-items:center">
-                 <span style="font-size:16px;font-weight:700;color:#c62828">${esc(item.price)}</span>
-                 ${item.originalPrice?`<span style="font-size:12px;color:#aaa;text-decoration:line-through">${esc(item.originalPrice)}</span>`:''}
-               </div>
-               ${item.reason?`<div style="font-size:12px;color:#888;margin-top:2px">${esc(item.reason)}</div>`:''}
-             </div>
-             <button class="btn-primary" style="font-size:12px;padding:6px 10px;flex-shrink:0" onclick="addFlyerToShop('${esc(item.name)}')">リスト追加</button>
-           </div>`).join('')}`
-      : state.flyerResult?.error
-      ? `<div class="err-box">解析に失敗しました。別の写真で試してください。</div>`
-      : `<div class="empty"><div style="font-size:14px">写真をアップロードすると<br>AIがチラシを解析して<br>お得な商品をリストアップします</div></div>`;
-
-    const previewHtml = state.flyerPreview
-      ? `<img src="${state.flyerPreview}" style="max-width:100%;max-height:200px;border-radius:10px;object-fit:contain;display:block;margin-bottom:12px">`
-      : '';
-
-    content=`
-      <div class="flyer-upload" onclick="document.getElementById('flyer-input').click()">
-        ${previewHtml}
-        <div style="font-size:40px;margin-bottom:8px">📸</div>
-        <div style="font-size:15px;font-weight:600">${state.flyerPreview?'別の写真に変更':'チラシの写真をアップロード'}</div>
-        <div style="font-size:12px;color:#aaa;margin-top:4px">タップして撮影 or ファイル選択</div>
+    const rH=S.flyerLoading?`<div class="lb"><div class="sp"></div><p>チラシを解析中...</p></div>`
+      :S.flyerResult&&!S.flyerResult.error
+      ?`${S.flyerResult.summary?`<div style="background:#e8f5e9;border-radius:11px;padding:11px;margin-bottom:10px;font-size:13px">📋 <b>概要：</b>${esc(S.flyerResult.summary)}</div>`:''}
+        ${S.flyerResult.bestDeal?`<div style="background:#fff8e1;border-radius:11px;padding:11px;margin-bottom:10px;font-size:13px">🏆 <b>最もお得：</b>${esc(S.flyerResult.bestDeal)}</div>`:''}
+        <div class="stitle">商品リスト</div>
+        ${(S.flyerResult.items||[]).map(item=>`<div class="fi4" style="border-left:${item.recommend?'3px solid #f57c00':'3px solid transparent'}">
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+              <span style="font-size:13px;font-weight:600">${esc(item.name)}</span>
+              ${item.recommend?`<span style="font-size:10px;background:#fff3e0;color:#e65100;padding:2px 7px;border-radius:20px;font-weight:600">🔥おすすめ</span>`:''}
+              ${item.discount?`<span style="font-size:10px;background:#fce4ec;color:#c62828;padding:2px 7px;border-radius:20px;font-weight:600">${esc(item.discount)}</span>`:''}
+            </div>
+            <div style="margin-top:3px"><span style="font-size:15px;font-weight:700;color:#c62828">${esc(item.price)}</span>
+              ${item.originalPrice?` <span style="font-size:11px;color:#aaa;text-decoration:line-through">${esc(item.originalPrice)}</span>`:''}</div>
+            ${item.reason?`<div style="font-size:11px;color:#888;margin-top:1px">${esc(item.reason)}</div>`:''}
+          </div>
+          <button class="bp" style="font-size:11px;padding:5px 9px;flex-shrink:0" onclick="addFS('${esc(item.name)}')">追加</button>
+        </div>`).join('')}`
+      :S.flyerResult?.error?`<div class="err">解析に失敗しました</div>`
+      :`<div class="empty">写真をアップロードすると<br>AIがチラシを解析して<br>お得な商品をリストアップします</div>`;
+    body=`<div class="fu" onclick="document.getElementById('fly-inp').click()">
+        ${S.flyerPreview?`<img src="${S.flyerPreview}" style="max-height:160px;max-width:100%;border-radius:8px;object-fit:contain;margin-bottom:9px">`:''}
+        <div style="font-size:34px;margin-bottom:7px">📸</div>
+        <div style="font-size:14px;font-weight:600">${S.flyerPreview?'別の写真に変更':'チラシをアップロード'}</div>
+        <div style="font-size:12px;color:#aaa;margin-top:3px">タップして撮影 or ファイル選択</div>
       </div>
-      <input type="file" id="flyer-input" accept="image/*" style="display:none" onchange="handleFlyerFile(this)">
-      ${resultHtml}`;
+      <input type="file" id="fly-inp" accept="image/*" style="display:none" onchange="handleFlyer(this)">
+      ${rH}`;
   }
-
   else if(t==='memo'){
-    content=`
-      <div style="font-size:13px;color:#888;margin-bottom:10px">✏️ 今日の買い物メモ — 自由に書き込めます</div>
-      <textarea class="memo-area" oninput="updateMemo(this.value)" placeholder="例：&#10;・牛乳 × 2本&#10;・卵（特売のとき）&#10;・夕食用の鶏肉&#10;&#10;※ 自動保存されます">${esc(state.memoText)}</textarea>
+    body=`<div style="font-size:13px;color:#888;margin-bottom:9px">✏️ 今日の買い物メモ</div>
+      <textarea class="ma" oninput="S.memo=this.value;save()" placeholder="例：&#10;・牛乳 × 2本&#10;・卵&#10;&#10;※ 自動保存されます">${esc(S.memo)}</textarea>
       <div style="display:flex;gap:8px;margin-top:8px">
-        <button class="btn-ghost" style="flex:1" onclick="clearMemo()">🗑 クリア</button>
-        <button class="btn-primary" style="flex:2" onclick="memoToList()">📋 リストに変換</button>
-      </div>
-      <div style="font-size:12px;color:#bbb;margin-top:8px;text-align:center">自動保存 · データはこのブラウザに保存されます</div>`;
+        <button class="bg" style="flex:1" onclick="S.memo='';save();R()">🗑 クリア</button>
+        <button class="bp" style="flex:2" onclick="memoToList()">📋 リストに変換</button>
+      </div><div style="font-size:11px;color:#bbb;margin-top:7px;text-align:center">自動保存されます</div>`;
   }
-
   return `<div class="fade">
-    <div class="subtabs">
-      <button class="stab ${t==='list'?'stactive':''}" onclick="setShopTab('list')">📋 リスト</button>
-      <button class="stab ${t==='flyer'?'stactive':''}" onclick="setShopTab('flyer')">📸 チラシ読取</button>
-      <button class="stab ${t==='memo'?'stactive':''}" onclick="setShopTab('memo')">✏️ メモ</button>
-    </div>
-    ${content}
-  </div>`;
+    <div class="stabs">
+      <button class="stb ${t==='list'?'sa':''}"    onclick="setST('list')">📋 リスト</button>
+      <button class="stb ${t==='receipt'?'sa':''}" onclick="setST('receipt')">🧾 レシート</button>
+      <button class="stb ${t==='flyer'?'sa':''}"   onclick="setST('flyer')">📸 チラシ</button>
+      <button class="stb ${t==='memo'?'sa':''}"    onclick="setST('memo')">✏️ メモ</button>
+    </div>${body}</div>`;
 }
 
-function renderAddShopModal(){
-  return `<div class="overlay" onclick="closeAddShop()">
-    <div class="modal" style="max-width:340px;margin:0 auto" onclick="event.stopPropagation()">
-      <div class="m-title">リストに追加</div>
-      <div class="field"><label class="lbl">品名</label><input class="fi" id="shop-name-input" placeholder="例: 卵" value="${esc(state.shopForm.name)}" oninput="state.shopForm.name=this.value"></div>
-      <div class="field"><label class="lbl">数量（任意）</label><input class="fi" placeholder="例: 1パック" value="${esc(state.shopForm.qty)}" oninput="state.shopForm.qty=this.value"></div>
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button class="btn-ghost" style="flex:1" onclick="closeAddShop()">キャンセル</button>
-        <button class="btn-primary" style="flex:2" onclick="addShopItem()">追加</button>
-      </div>
-    </div>
-  </div>`;
+function rAddShopMo(){
+  return `<div class="ov" onclick="closeAddShop()"><div class="mo" style="max-width:340px;margin:0 auto" onclick="event.stopPropagation()">
+    <div class="mt">リストに追加</div>
+    <div class="field"><label class="lbl">品名</label>
+      <input class="fi3" placeholder="例: 卵" value="${esc(S.shopForm.name)}" oninput="S.shopForm.name=this.value"></div>
+    <div class="field"><label class="lbl">数量（任意）</label>
+      <input class="fi3" placeholder="例: 1パック" value="${esc(S.shopForm.qty)}" oninput="S.shopForm.qty=this.value"></div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="bg" style="flex:1" onclick="closeAddShop()">キャンセル</button>
+      <button class="bp" style="flex:2" onclick="addShopItem()">追加</button>
+    </div></div></div>`;
 }
 
-// ── MEALS ──────────────────────────────────────────────
-function renderMeals(){
-  const urgent=state.items.filter(i=>daysLeft(i.expiry)<=3);
-  const urgText=urgent.map(i=>`${i.name}（${expiryLabel(daysLeft(i.expiry))}）`).join('　');
-
-  const planHtml = state.mealLoading
-    ? `<div class="load-box"><div class="spin"></div><p>献立を生成中...</p></div>`
-    : state.mealPlan && !state.mealPlan.error
-    ? `<div>
-        ${(state.mealPlan.days||[]).map(day=>`
-          <div class="day-card">
-            <div style="font-size:14px;font-weight:700;color:#555;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f0ede8">${esc(day.day)}</div>
-            ${(day.meals||[]).map(meal=>`
-              <div class="meal-row">
-                <div style="font-size:11px;font-weight:700;color:#aaa;width:36px;padding-top:2px;flex-shrink:0">${esc(meal.type)}</div>
-                <div style="flex:1">
-                  <div style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                    ${esc(meal.name)}
-                    ${meal.urgent?`<span style="font-size:11px;background:#fff3e0;color:#e65100;padding:2px 8px;border-radius:20px">🔥 期限優先</span>`:''}
-                  </div>
-                  <div style="font-size:12px;color:#888;margin-top:3px">${(meal.ingredients||[]).map(esc).join('・')}</div>
-                  <div style="font-size:11px;color:#aaa">⏱ ${esc(meal.time)}</div>
-                </div>
-              </div>`).join('')}
-          </div>`).join('')}
-        ${state.mealPlan.tips?`<div style="background:#f0fdf4;border:1px solid #a5d6a7;border-radius:12px;padding:14px"><b>💡 アドバイス</b><p style="margin-top:6px;font-size:13px;line-height:1.6">${esc(state.mealPlan.tips)}</p></div>`:''}
-      </div>`
-    : state.mealPlan?.error
-    ? `<div class="err-box">献立の生成に失敗しました。再試行してください。</div>`
-    : `<div class="empty"><div style="font-size:48px;margin-bottom:12px">🍽️</div><div>ボタンを押してAIに<br>献立を提案してもらいましょう</div></div>`;
-
+function rMeals(){
+  const urg=S.items.filter(i=>dl(i.expiry)<=3);
+  const pH=S.mealLoading?`<div class="lb"><div class="sp"></div><p>献立を生成中...</p></div>`
+    :S.mealPlan&&!S.mealPlan.error?`<div>
+      ${(S.mealPlan.days||[]).map(day=>`<div class="dc">
+        <div style="font-size:13px;font-weight:700;color:#555;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid #f0ede8">${esc(day.day)}</div>
+        ${(day.meals||[]).map(m=>`<div class="mr">
+          <div style="font-size:10px;font-weight:700;color:#aaa;width:32px;padding-top:2px;flex-shrink:0">${esc(m.type)}</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              ${esc(m.name)}${m.urgent?`<span style="font-size:10px;background:#fff3e0;color:#e65100;padding:2px 6px;border-radius:20px">🔥期限優先</span>`:''}
+            </div>
+            <div style="font-size:11px;color:#888;margin-top:2px">${(m.ingredients||[]).map(esc).join('・')}</div>
+            <div style="font-size:10px;color:#aaa">⏱ ${esc(m.time)}</div>
+          </div></div>`).join('')}</div>`).join('')}
+      ${S.mealPlan.tips?`<div style="background:#f0fdf4;border:1px solid #a5d6a7;border-radius:11px;padding:13px"><b>💡 アドバイス</b><p style="margin-top:5px;font-size:13px;line-height:1.6">${esc(S.mealPlan.tips)}</p></div>`:''}
+    </div>`:S.mealPlan?.error?`<div class="err">献立の生成に失敗しました。再試行してください。</div>`
+    :`<div class="empty"><div style="font-size:42px;margin-bottom:10px">🍽️</div>ボタンを押してAIに<br>献立を提案してもらいましょう</div>`;
   return `<div class="fade">
-    <button class="btn-primary" style="width:100%;padding:14px;font-size:15px;margin-bottom:8px" onclick="generateMeals()" ${state.mealLoading?'disabled':''}>
-      ${state.mealLoading?'⏳ 献立を考えています...':'🤖 AIで3日間の献立を生成'}
+    <button class="bp" style="width:100%;padding:13px;font-size:15px;margin-bottom:7px" onclick="genMeals()" ${S.mealLoading?'disabled':''}>
+      ${S.mealLoading?'⏳ 考えています...':'🤖 AIで3日間の献立を生成'}
     </button>
-    <p style="font-size:12px;color:#aaa;text-align:center;margin-bottom:16px">期限間近の食材を優先して献立を提案します</p>
-    ${urgent.length>0?`<div style="background:#fff3e0;border-radius:12px;padding:12px;font-size:13px;margin-bottom:16px;line-height:1.7"><b>⚠️ 期限間近：</b>${urgText}</div>`:''}
-    ${planHtml}
-  </div>`;
+    <p style="font-size:12px;color:#aaa;text-align:center;margin-bottom:13px">期限間近の食材を優先して提案します</p>
+    ${urg.length>0?`<div style="background:#fff3e0;border-radius:11px;padding:11px;font-size:13px;margin-bottom:13px;line-height:1.7"><b>⚠️ 期限間近：</b>${urg.map(i=>`${i.name}（${el(dl(i.expiry))}）`).join('　')}</div>`:''}
+    ${pH}</div>`;
 }
 
-// ═══════════════════════════════════════════════════════
-// ACTIONS
-// ═══════════════════════════════════════════════════════
-function switchTab(t){state.tab=t;render()}
-function setActiveFridge(id){state.activeFridge=id;state.tab='items';render()}
-function updateSearch(v){state.searchQ=v;render()}
+// ══════ ACTIONS ══════
+function switchTab(t){S.tab=t;R()}
+function setFridge(id){S.fridge=id;S.tab='items';R()}
+function setQ(v){S.q=v;R()}
 
-function openAddItem(){state.addItemOpen=true;render();setTimeout(()=>document.querySelector('.modal')?.scrollTo(0,0),50)}
-function closeAddItem(){state.addItemOpen=false;render()}
-function selectPreset(name,unit,qty,expDays){
-  state.addForm={...state.addForm,name,unit,qty,expiry:daysFromNow(expDays)};render();
+// ─ Items
+function chQty(id,d){
+  const i=S.items.find(x=>x.id===id);if(!i)return;
+  const nq=Math.max(0,parseFloat((Number(i.qty)+d).toFixed(2)));
+  if(nq===0){
+    if(confirm(`「${i.name}」を削除しますか？`)){S.items=S.items.filter(x=>x.id!==id);}
+    else return;
+  } else {i.qty=nq;}
+  save();R();
 }
-function setFormCat(c){state.addForm={...state.addForm,category:c,name:"",unit:"個",qty:1};render()}
-function setFormFridge(id){state.addForm={...state.addForm,fridgeId:id};render()}
-function setFormName(v){state.addForm.name=v}
-function setFormQty(v){state.addForm.qty=v}
-function setFormUnit(v){state.addForm.unit=v}
-function setFormExpiry(v){state.addForm.expiry=v}
-function setFormNote(v){state.addForm.note=v}
+function delItem(id){
+  const i=S.items.find(x=>x.id===id);
+  if(i&&confirm(`「${i.name}」を削除しますか？`)){S.items=S.items.filter(x=>x.id!==id);save();R();}
+}
+
+// ─ Add item modal（★ 冷蔵庫バグ修正：setFF/setFCはS.formを更新してR()する）
+function openAdd(){S.addOpen=true;R();setTimeout(()=>document.querySelector('.mo')?.scrollTo(0,0),50)}
+function closeAdd(){S.addOpen=false;R()}
+function setFC(c){S.form={...S.form,category:c,name:"",unit:"個",qty:1};R()}
+function setFF(id){S.form.fridgeId=id;R()}   // ★ ここがバグの核心：idを数値で保存してR()
+function selP(n,u,q,e){S.form={...S.form,name:n,unit:u,qty:q,expiry:dfn(e)};R()}
 function addItem(){
-  const f=state.addForm;
-  if(!f.name.trim())return;
-  state.items.push({id:Date.now(),name:f.name,fridgeId:f.fridgeId,category:f.category,qty:Number(f.qty),unit:f.unit,expiry:f.expiry,note:f.note});
-  state.freq[f.name]=(state.freq[f.name]||0)+1;
-  state.addForm={name:"",fridgeId:1,category:"dairy",qty:1,unit:"個",expiry:daysFromNow(7),note:""};
-  state.addItemOpen=false;
-  saveState();render();
+  const f=S.form;if(!f.name.trim())return;
+  S.items.push({id:uid(),name:f.name.trim(),fridgeId:Number(f.fridgeId),category:f.category,qty:Number(f.qty)||1,unit:f.unit,expiry:f.expiry,note:f.note});
+  S.freq[f.name.trim()]=(S.freq[f.name.trim()]||0)+1;
+  S.form={name:"",fridgeId:1,category:"dairy",qty:1,unit:"個",expiry:dfn(7),note:""};
+  S.addOpen=false;save();R();
 }
-function deleteItem(id){state.items=state.items.filter(i=>i.id!==id);saveState();render()}
 
-function setShopTab(t){state.shopTab=t;render()}
-function openAddShop(){state.addShopOpen=true;render()}
-function closeAddShop(){state.addShopOpen=false;render()}
-function addShopItem(){
-  const n=state.shopForm.name;if(!n.trim())return;
-  state.shopping.push({id:Date.now(),name:n,qty:state.shopForm.qty,done:false});
-  state.shopForm={name:"",qty:""};
-  state.addShopOpen=false;saveState();render();
-}
-function addSuggestedToShop(name){
-  if(!state.shopping.find(s=>s.name===name)) state.shopping.push({id:Date.now(),name,qty:"",done:false});
-  saveState();render();
-}
-function addFlyerToShop(name){
-  addSuggestedToShop(name);
-  state.shopTab='list';render();
-}
-function toggleShop(id){state.shopping=state.shopping.map(s=>s.id===id?{...s,done:!s.done}:s);saveState();render()}
-function deleteShop(id){state.shopping=state.shopping.filter(s=>s.id!==id);saveState();render()}
-function clearDoneShop(){state.shopping=state.shopping.filter(s=>!s.done);saveState();render()}
-function updateMemo(v){state.memoText=v;saveState()}
-function clearMemo(){state.memoText="";saveState();render()}
+// ─ Shopping
+function setST(t){S.shopTab=t;R()}
+function openAddShop(){S.addShopOpen=true;R()}
+function closeAddShop(){S.addShopOpen=false;R()}
+function addShopItem(){if(!S.shopForm.name.trim())return;S.shopping.push({id:uid(),name:S.shopForm.name.trim(),qty:S.shopForm.qty,done:false});S.shopForm={name:"",qty:""};S.addShopOpen=false;save();R()}
+function addSugg(n){if(!S.shopping.find(s=>s.name===n))S.shopping.push({id:uid(),name:n,qty:"",done:false});save();R()}
+function addFS(n){addSugg(n);S.shopTab='list';R()}
+function togShop(id){S.shopping=S.shopping.map(s=>s.id===id?{...s,done:!s.done}:s);save();R()}
+function delShop(id){S.shopping=S.shopping.filter(s=>s.id!==id);save();R()}
+function clearDone(){S.shopping=S.shopping.filter(s=>!s.done);save();R()}
 function memoToList(){
-  const lines=state.memoText.split('\n').map(l=>l.replace(/^[・\-\*\s]+/,'').trim()).filter(Boolean);
-  lines.forEach(l=>{if(!state.shopping.find(s=>s.name===l))state.shopping.push({id:Date.now()+Math.random(),name:l,qty:"",done:false})});
-  state.shopTab='list';saveState();render();
+  S.memo.split('\n').map(l=>l.replace(/^[・\-\*\s]+/,'').trim()).filter(Boolean)
+    .forEach(l=>{if(!S.shopping.find(s=>s.name===l))S.shopping.push({id:uid(),name:l,qty:"",done:false})});
+  S.shopTab='list';save();R();
 }
 
-function showHelp(){document.getElementById('help-overlay').style.display='block'}
-function hideHelp(){document.getElementById('help-overlay').style.display='none'}
-
-// ── FLYER ──
-function handleFlyerFile(input){
-  const file=input.files[0];if(!file)return;
+// ─ Receipt
+function handleReceipt(inp){
+  const file=inp.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=async(ev)=>{
-    const dataUrl=ev.target.result;
-    state.flyerPreview=dataUrl;
-    const base64=dataUrl.split(',')[1];
-    const mime=file.type||'image/jpeg';
-    state.flyerLoading=true;state.flyerResult=null;render();
+    S.receiptPreview=ev.target.result;S.receiptLoading=true;S.receiptResult=null;S.receiptConfirm=null;R();
     try{
-      const stock=state.items.map(i=>i.name).join('、');
-      const res=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:[
-          {type:'image',source:{type:'base64',media_type:mime,data:base64}},
-          {type:'text',text:`このチラシを分析。冷蔵庫在庫：${stock||'なし'}\nJSON形式のみで回答：{"items":[{"name":"商品名","price":"¥000","originalPrice":"¥000","discount":"30%OFF","recommend":true,"reason":"理由"}],"summary":"概要","bestDeal":"最もお得"}`}
+      const b64=ev.target.result.split(',')[1],mime=file.type||'image/jpeg';
+      const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:mime,data:b64}},
+          {type:'text',text:`このレシートから購入した食材・食品のみ読み取ってください（日用品・雑貨は除く）。
+冷蔵庫3台の振り分けガイド：冷蔵庫A(fridgeId:1 = 肉・乳製品・飲料)、冷蔵庫B(fridgeId:2 = 野菜・果物)、冷蔵庫C(fridgeId:3 = 冷凍・調味料)。
+今日の日付: ${new Date().toISOString().split('T')[0]}
+JSONのみで回答：{"items":[{"name":"食材名","qty":1,"unit":"個","category":"dairy/meat/vegetable/frozen/seasoning/drink/other","fridgeId":1,"expiry":"YYYY-MM-DD","confidence":"high/low"}]}`}
         ]}]})
       });
       const d=await res.json();
-      const txt=d.content?.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim();
-      state.flyerResult=JSON.parse(txt);
-    }catch(e){state.flyerResult={error:true}}
-    state.flyerLoading=false;render();
+      const parsed=JSON.parse(d.content?.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim());
+      S.receiptConfirm=(parsed.items||[]).map(i=>({...i,fridgeId:Number(i.fridgeId)||1,selected:i.confidence!=='low'}));
+      S.receiptResult=parsed;
+    }catch(e){S.receiptResult={error:true}}
+    S.receiptLoading=false;R();
+  };
+  reader.readAsDataURL(file);
+}
+function togRC(i){S.receiptConfirm[i].selected=!S.receiptConfirm[i].selected;R()}
+function edRC(i){
+  const c=prompt('冷蔵庫を番号で入力:\n1 = 冷蔵庫A（肉・乳製品）\n2 = 冷蔵庫B（野菜）\n3 = 冷蔵庫C（冷凍・調味料）');
+  const n=parseInt(c);if(n>=1&&n<=3){S.receiptConfirm[i].fridgeId=n;R();}
+}
+function bulkAdd(){
+  const sel=S.receiptConfirm.filter(i=>i.selected);
+  sel.forEach(i=>{S.items.push({id:uid(),name:i.name,fridgeId:Number(i.fridgeId)||1,category:i.category||'other',qty:parseFloat(i.qty)||1,unit:i.unit||'個',expiry:i.expiry||dfn(7),note:'🧾 レシートから追加'});S.freq[i.name]=(S.freq[i.name]||0)+1;});
+  S.receiptConfirm=null;S.receiptPreview=null;S.receiptResult=null;
+  save();switchTab('items');alert(`✅ ${sel.length}件の食材を在庫に追加しました！`);
+}
+
+// ─ Flyer
+function handleFlyer(inp){
+  const file=inp.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=async(ev)=>{
+    S.flyerPreview=ev.target.result;S.flyerLoading=true;S.flyerResult=null;R();
+    try{
+      const b64=ev.target.result.split(',')[1],mime=file.type||'image/jpeg';
+      const stock=S.items.map(i=>i.name).join('、');
+      const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:mime,data:b64}},
+          {type:'text',text:`チラシを分析。在庫:${stock||'なし'}\nJSONのみ：{"items":[{"name":"商品名","price":"¥000","originalPrice":"¥000","discount":"30%OFF","recommend":true,"reason":"理由"}],"summary":"概要","bestDeal":"最もお得"}`}
+        ]}]})
+      });
+      const d=await res.json();
+      S.flyerResult=JSON.parse(d.content?.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim());
+    }catch(e){S.flyerResult={error:true}}
+    S.flyerLoading=false;R();
   };
   reader.readAsDataURL(file);
 }
 
-// ── AI SHOP SUGGEST ──
+// ─ AI
 async function getShopSugg(){
-  state.shopLoading=true;state.shopSugg=null;render();
-  try{
-    const s=state.items.map(i=>`${i.name} ${i.qty}${i.unit}`).join('、');
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
+  S.shopLoading=true;S.shopSugg=null;R();
+  try{const s=S.items.map(i=>`${i.name} ${i.qty}${i.unit}`).join('、');
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:`在庫：${s||'なし'}\n不足食材を提案。JSON：{"items":[{"name":"名前","reason":"理由","priority":"高/中/低"}]}`}]})
-    });
-    const d=await res.json();
-    const txt=d.content?.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim();
-    state.shopSugg=JSON.parse(txt);
-  }catch(e){state.shopSugg={error:true}}
-  state.shopLoading=false;render();
+    });const d=await res.json();
+    S.shopSugg=JSON.parse(d.content?.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim());
+  }catch(e){S.shopSugg={error:true}}
+  S.shopLoading=false;R();
+}
+async function genMeals(){
+  S.mealLoading=true;S.mealPlan=null;R();
+  try{const urg=S.items.filter(i=>dl(i.expiry)<=3);
+    const u=urg.map(i=>`${i.name}（${el(dl(i.expiry))}）`).join('、'),a=S.items.map(i=>i.name).join('、');
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`料理専門家として献立を提案。\n期限間近:${u||'なし'}\n全在庫:${a}\n3日分朝昼夕をJSON：{"days":[{"day":"今日","meals":[{"type":"朝食","name":"料理名","ingredients":["食材"],"time":"15分","urgent":true},...]},...], "tips":"アドバイス"}`}]})
+    });const d=await res.json();
+    S.mealPlan=JSON.parse(d.content?.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim());
+  }catch(e){S.mealPlan={error:true}}
+  S.mealLoading=false;R();
 }
 
-// ── AI MEALS ──
-async function generateMeals(){
-  state.mealLoading=true;state.mealPlan=null;render();
-  try{
-    const urgent=state.items.filter(i=>daysLeft(i.expiry)<=3);
-    const u=urgent.map(i=>`${i.name}（${expiryLabel(daysLeft(i.expiry))}）`).join('、');
-    const a=state.items.map(i=>i.name).join('、');
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`料理専門家として冷蔵庫の食材で献立を提案してください。\n【今すぐ使うべき食材】${u||'なし'}\n【全在庫】${a}\n期限間近を優先して3日分の朝昼夕を提案。\nJSON形式のみ：{"days":[{"day":"今日","meals":[{"type":"朝食","name":"料理名","ingredients":["食材"],"time":"15分","urgent":true},...]},...], "tips":"アドバイス"}`}]})
-    });
-    const d=await res.json();
-    const txt=d.content?.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim();
-    state.mealPlan=JSON.parse(txt);
-  }catch(e){state.mealPlan={error:true}}
-  state.mealLoading=false;render();
-}
+function showHelp(){document.getElementById('hov').style.display='block'}
+function hideHelp(){document.getElementById('hov').style.display='none'}
 
-// ═══════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════
-loadState();
-render();
+// ══════ INIT ══════
+loadSaved();R();
 </script>
 </body>
 </html>
