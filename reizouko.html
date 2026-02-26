@@ -212,6 +212,7 @@ const S={
   flyerResult:null,flyerLoading:false,flyerPreview:null,
   receiptResult:null,receiptLoading:false,receiptPreview:null,receiptConfirm:null,
   mealPlan:null,mealLoading:false,
+  pendingDelete:null,
 };
 
 // ══════ STORAGE ══════
@@ -278,6 +279,16 @@ function rItems(){
   list.sort((a,b)=>dl(a.expiry)-dl(b.expiry));
   const iH=list.length===0?`<div class="empty">在庫がありません<br><small>「＋ 食材を追加」から登録してください</small></div>`
     :list.map(i=>{const d=dl(i.expiry),c=ec(d),cat=gc(i.category),fr=gf(i.fridgeId);
+      // 削除確認中のアイテムはインラインUIで表示
+      if(S.pendingDelete===i.id){
+        return `<div class="ir" style="background:#fff3f3;border:1.5px solid #ffcdd2;flex-direction:column;align-items:stretch;gap:8px">
+          <div style="font-size:13px;font-weight:600;color:#c62828">🗑 「${esc(i.name)}」を削除しますか？</div>
+          <div style="display:flex;gap:8px">
+            <button class="bg" style="flex:1;font-size:13px;padding:8px" onclick="cancelDelete()">キャンセル</button>
+            <button style="flex:1;font-size:13px;padding:8px;background:#e53935;color:#fff;border:none;border-radius:12px;cursor:pointer;font-weight:600" onclick="confirmDelete(${i.id})">削除する</button>
+          </div>
+        </div>`;
+      }
       return `<div class="ir" style="${d<=2?'border-left:3px solid '+c.bg:''}">
         <div style="font-size:20px;width:28px;text-align:center;flex-shrink:0">${cat.icon}</div>
         <div style="flex:1;min-width:0">
@@ -506,20 +517,16 @@ function switchTab(t){S.tab=t;R()}
 function setFridge(id){S.fridge=id;S.tab='items';R()}
 function setQ(v){S.q=v;R()}
 
-// ─ Items
+// ─ Items（confirm()廃止 → インライン確認）
 function chQty(id,d){
   const i=S.items.find(x=>x.id===id);if(!i)return;
   const nq=Math.max(0,parseFloat((Number(i.qty)+d).toFixed(2)));
-  if(nq===0){
-    if(confirm(`「${i.name}」を削除しますか？`)){S.items=S.items.filter(x=>x.id!==id);}
-    else return;
-  } else {i.qty=nq;}
-  save();R();
+  if(nq===0){ S.pendingDelete=id; R(); return; }
+  i.qty=nq; save(); R();
 }
-function delItem(id){
-  const i=S.items.find(x=>x.id===id);
-  if(i&&confirm(`「${i.name}」を削除しますか？`)){S.items=S.items.filter(x=>x.id!==id);save();R();}
-}
+function delItem(id){ S.pendingDelete=id; R(); }
+function confirmDelete(id){ S.items=S.items.filter(x=>x.id!==id); S.pendingDelete=null; save(); R(); }
+function cancelDelete(){ S.pendingDelete=null; R(); }
 
 // ─ Add item modal（★ 冷蔵庫バグ修正：setFF/setFCはS.formを更新してR()する）
 function openAdd(){S.addOpen=true;R();setTimeout(()=>document.querySelector('.mo')?.scrollTo(0,0),50)}
